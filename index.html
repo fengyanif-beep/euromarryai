@@ -1,36 +1,355 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Euro Marry AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Poppins', sans-serif;
-      }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Playfair Display', serif;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "react/": "https://aistudiocdn.com/react@^19.1.1/"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Euro Marry AI — AI Wedding Photos in Iconic European Cities</title>
+  <meta name="description" content="Upload your photo, choose a European city & style, receive 20 AI-generated wedding-inspired photos — only €19."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --brand:#D84D8B; --dark:#0D0D0F; --muted:#666; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif; color:#1a1a1a; background:#fff; }
+    .title { font-family: "Playfair Display", Georgia, serif; }
+    .btn { background:var(--brand); color:#fff; padding:.9rem 1.25rem; border-radius:999px; font-weight:700; transition:.2s; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px -8px rgba(216,77,139,.6); }
+    .btn-outline { border:2px solid var(--brand); color:var(--brand); background:#fff; }
+    .badge { display:inline-block; border:1px solid #e6e6e6; padding:.25rem .6rem; border-radius:999px; font-size:.8rem; color:#555; }
+    .glass { backdrop-filter: blur(6px); background: rgba(255,255,255,.7); }
+    .container { max-width: 1120px; }
+    .card { border:1px solid #eee; border-radius:16px; overflow:hidden; background:#fff; }
+    .check:before { content:"✓"; display:inline-block; margin-right:.5rem; color:#10B981; font-weight:900; }
+    .sticky-cta { position:sticky; bottom:16px; z-index:40; }
+    .shadow-soft { box-shadow:0 20px 60px -30px rgba(0,0,0,.25); }
+    /* Modal */
+    .modal { position:fixed; inset:0; background:rgba(13,13,15,.7); display:none; align-items:center; justify-content:center; z-index:50; padding:1rem; }
+    .modal.open { display:flex; }
+    .modal-panel { width:100%; max-width:720px; background:#fff; border-radius:20px; overflow:hidden; }
+    .step { display:none; }
+    .step.active { display:block; }
+    /* Simple gallery hover */
+    .gimg { transition:.35s; }
+    .gimg:hover { transform: translateY(-4px); box-shadow:0 10px 30px -12px rgba(0,0,0,.35); }
+  </style>
 </head>
-  <body class="bg-pink-50">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+<body>
+
+  <!-- Top Bar -->
+  <header class="w-full">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-[var(--brand)]"></div>
+        <span class="title text-xl font-extrabold">Euro Marry AI</span>
+      </div>
+      <nav class="hidden md:flex items-center gap-8 text-[15px]">
+        <a href="#portfolio" class="hover:text-[var(--brand)]">Portfolio</a>
+        <a href="#pricing" class="hover:text-[var(--brand)]">Pricing</a>
+        <a href="#faq" class="hover:text-[var(--brand)]">FAQ</a>
+        <button id="openModalTop" class="btn">Order Now</button>
+      </nav>
+      <button id="openModalTopSm" class="md:hidden btn">Order</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative">
+    <div class="absolute inset-0">
+      <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover" alt="European romantic background">
+      <div class="absolute inset-0 bg-gradient-to-b from-white/70 to-white"></div>
+    </div>
+    <div class="container mx-auto px-4 relative pt-16 pb-20 md:pb-28">
+      <div class="max-w-3xl">
+        <span class="badge">Launch special — €19</span>
+        <h1 class="title text-4xl md:text-6xl font-extrabold leading-tight mt-4">
+          Marry in Paris, London, Florence, Santorini — all for €19
+        </h1>
+        <p class="text-lg md:text-xl text-[var(--muted)] mt-4">
+          Upload your photo, choose a city & style, and receive <b>20 AI-generated wedding-inspired photos</b> within 24 hours.
+        </p>
+        <div class="flex flex-wrap items-center gap-3 mt-8">
+          <button id="openModalHero" class="btn">Order Now</button>
+          <a href="#portfolio" class="btn btn-outline">See Samples</a>
+          <span class="text-sm text-[var(--muted)]">100% money-back guarantee</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <section class="border-y bg-white">
+    <div class="container mx-auto px-4 py-6 flex flex-wrap items-center gap-6 justify-between">
+      <div class="flex items-center gap-2 text-sm"><span class="check"></span>Secure payment by Stripe</div>
+      <div class="flex items-center gap-2 text-sm"><span class="check"></span>Delivery within 24 hours</div>
+      <div class="flex items-center gap-2 text-sm"><span class="check"></span>Privacy-first — photos deleted on request</div>
+      <div class="flex items-center gap-2 text-sm"><span class="check"></span>Money-back guarantee</div>
+    </div>
+  </section>
+
+  <!-- Portfolio -->
+  <section id="portfolio" class="container mx-auto px-4 py-16">
+    <div class="flex items-end justify-between">
+      <h2 class="title text-3xl md:text-4xl font-extrabold">Sample Gallery</h2>
+      <div class="flex gap-2">
+        <span class="badge">Paris</span>
+        <span class="badge">London</span>
+        <span class="badge">Florence</span>
+        <span class="badge">Santorini</span>
+      </div>
+    </div>
+
+    <!-- 3x2 grid -->
+    <div class="grid md:grid-cols-3 gap-6 mt-8">
+      <!-- 6 sample images (replace with your works) -->
+      <img class="gimg w-full h-64 object-cover rounded-xl" src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200&auto=format&fit=crop" alt="Paris sample">
+      <img class="gimg w-full h-64 object-cover rounded-xl" src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop" alt="London sample">
+      <img class="gimg w-full h-64 object-cover rounded-xl" src="https://images.unsplash.com/photo-1526779259212-939e64788e3c?q=80&w=1200&auto=format&fit=crop" alt="Florence sample">
+      <img class="gimg w-full h-64 object-cover rounded-xl" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop" alt="Santorini sample">
+      <img class="gimg w-full h-64 object-cover rounded-xl" src="https://images.unsplash.com/photo-1487412912498-0447578fcca8?q=80&w=1200&auto=format&fit=crop" alt="Vintage sample">
+      <img class="gimg w-full h-64 object-cover rounded-xl" src="https://images.unsplash.com/photo-1495121605193-b116b5b09a57?q=80&w=1200&auto=format&fit=crop" alt="Film sample">
+    </div>
+    <div class="text-center mt-8">
+      <button id="openModalMid" class="btn">Get My €19 Pack</button>
+      <p class="text-sm text-[var(--muted)] mt-2">Includes 20 edited photos + all originals</p>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="bg-[#FAF7FA] border-y">
+    <div class="container mx-auto px-4 py-16">
+      <h2 class="title text-3xl md:text-4xl font-extrabold">How it Works</h2>
+      <div class="grid md:grid-cols-3 gap-6 mt-8">
+        <div class="card p-6">
+          <div class="text-3xl">①</div>
+          <h3 class="font-bold mt-2">Choose city & style</h3>
+          <p class="text-[var(--muted)] mt-2">Paris chic, London classic, Florence Renaissance, Santorini sunset…</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-3xl">②</div>
+          <h3 class="font-bold mt-2">Pay & upload your photo</h3>
+          <p class="text-[var(--muted)] mt-2">Secure Stripe checkout → Upload via form (JPG/PNG, up to 20MB).</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-3xl">③</div>
+          <h3 class="font-bold mt-2">Receive within 24h</h3>
+          <p class="text-[var(--muted)] mt-2">We deliver 20 AI-generated wedding-inspired photos + download link.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="container mx-auto px-4 py-16">
+    <h2 class="title text-3xl md:text-4xl font-extrabold">Simple Pricing</h2>
+    <div class="grid md:grid-cols-3 gap-6 mt-8">
+      <div class="card p-6">
+        <div class="badge">Launch</div>
+        <h3 class="title text-2xl font-extrabold mt-2">€19</h3>
+        <ul class="mt-4 space-y-2 text-[15px]">
+          <li class="check">20 AI photos (1 city, 1 style)</li>
+          <li class="check">Delivery within 24h</li>
+          <li class="check">Money-back guarantee</li>
+        </ul>
+        <button id="openModalPrice1" class="btn w-full mt-6">Order €19 Pack</button>
+      </div>
+      <div class="card p-6 border-[var(--brand)] shadow-soft">
+        <div class="badge">Most Popular</div>
+        <h3 class="title text-2xl font-extrabold mt-2">€49</h3>
+        <ul class="mt-4 space-y-2 text-[15px]">
+          <li class="check">60 AI photos (3 cities/styles)</li>
+          <li class="check">Priority delivery (12h)</li>
+          <li class="check">Money-back guarantee</li>
+        </ul>
+        <button id="openModalPrice2" class="btn w-full mt-6">Order €49 Pack</button>
+      </div>
+      <div class="card p-6">
+        <div class="badge">Premium</div>
+        <h3 class="title text-2xl font-extrabold mt-2">€99</h3>
+        <ul class="mt-4 space-y-2 text-[15px]">
+          <li class="check">150 AI photos (all cities/styles)</li>
+          <li class="check">Same-day delivery</li>
+          <li class="check">Photo book mockup</li>
+        </ul>
+        <button id="openModalPrice3" class="btn w-full mt-6">Order €99 Pack</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social proof -->
+  <section class="bg-white border-y">
+    <div class="container mx-auto px-4 py-16">
+      <h2 class="title text-3xl md:text-4xl font-extrabold">What early users say</h2>
+      <div class="grid md:grid-cols-3 gap-6 mt-8">
+        <div class="card p-6">
+          <p>“Couldn’t believe it’s €19. The Paris set looks like we actually shot there.”</p>
+          <div class="mt-4 text-sm text-[var(--muted)]">— L., London</div>
+        </div>
+        <div class="card p-6">
+          <p>“We used the Santorini pack for our save-the-date cards. Instant yes.”</p>
+          <div class="mt-4 text-sm text-[var(--muted)]">— M., Berlin</div>
+        </div>
+        <div class="card p-6">
+          <p>“Fast delivery, tasteful styles, and they refunded one pose we didn’t like.”</p>
+          <div class="mt-4 text-sm text-[var(--muted)]">— A., Paris</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="container mx-auto px-4 py-16">
+    <h2 class="title text-3xl md:text-4xl font-extrabold">FAQ</h2>
+    <div class="grid md:grid-cols-2 gap-6 mt-8 text-[15px]">
+      <div class="card p-6">
+        <h3 class="font-bold">How do I upload my photo?</h3>
+        <p class="text-[var(--muted)] mt-2">Click “Order Now”, complete payment, and you’ll see a form to upload JPG/PNG. We accept selfies and portraits; higher resolution gives better results.</p>
+      </div>
+      <div class="card p-6">
+        <h3 class="font-bold">Is €19 final?</h3>
+        <p class="text-[var(--muted)] mt-2">Yes. Launch price includes 20 AI photos, editing, and delivery link. VAT included if applicable.</p>
+      </div>
+      <div class="card p-6">
+        <h3 class="font-bold">Privacy?</h3>
+        <p class="text-[var(--muted)] mt-2">We use your photo only to generate the order. On request, we delete source files within 72h. No public sharing without consent.</p>
+      </div>
+      <div class="card p-6">
+        <h3 class="font-bold">Refund policy?</h3>
+        <p class="text-[var(--muted)] mt-2">If you’re not satisfied, contact us within 7 days for a full refund. Simple as that.</p>
+      </div>
+    </div>
+    <div class="text-center mt-10">
+      <button id="openModalBottom" class="btn">Order Now — €19</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t">
+    <div class="container mx-auto px-4 py-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+      <div>
+        <div class="title text-xl font-extrabold">Euro Marry AI</div>
+        <div class="text-sm text-[var(--muted)] mt-2">Paris • Remote • hello@euromarryai.com</div>
+      </div>
+      <div class="text-sm text-[var(--muted)]">
+        © 2025 Euro Marry AI — All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Sticky CTA -->
+  <div class="sticky-cta w-full">
+    <div class="container mx-auto px-4">
+      <div class="card shadow-soft px-4 py-3 flex items-center justify-between gap-4">
+        <div class="text-sm">Launch special: <b>€19</b> for 20 photos — 24h delivery</div>
+        <button id="openModalSticky" class="btn">Order Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER MODAL -->
+  <div id="orderModal" class="modal" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="p-4 flex items-center justify-between border-b">
+        <div class="title text-xl font-extrabold">Order — Euro Marry AI</div>
+        <button id="closeModal" class="px-3 py-1 rounded-full border">✕</button>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="px-6 pt-4 flex items-center gap-3 text-sm">
+        <div id="dot1" class="badge">Step 1 — Pay</div>
+        <div id="dot2" class="badge">Step 2 — Upload</div>
+      </div>
+
+      <!-- STEP 1: Payment -->
+      <div id="step1" class="step active px-6 pb-6 pt-4">
+        <div class="card p-5">
+          <h3 class="font-bold">Select your pack</h3>
+          <div class="grid md:grid-cols-3 gap-4 mt-4">
+            <label class="border rounded-xl p-4 flex items-center gap-3 cursor-pointer">
+              <input type="radio" name="pack" value="19" checked/>
+              <span>€19 — 20 photos</span>
+            </label>
+            <label class="border rounded-xl p-4 flex items-center gap-3 cursor-pointer">
+              <input type="radio" name="pack" value="49"/>
+              <span>€49 — 60 photos</span>
+            </label>
+            <label class="border rounded-xl p-4 flex items-center gap-3 cursor-pointer">
+              <input type="radio" name="pack" value="99"/>
+              <span>€99 — 150 photos</span>
+            </label>
+          </div>
+          <p class="text-sm text-[var(--muted)] mt-3">Secure checkout handled by Stripe.</p>
+          <a id="payLink" href="STRIPE_PAYMENT_LINK_HERE" target="_blank" rel="noopener" class="btn mt-4 inline-block">Go to Payment</a>
+          <p class="text-xs text-[var(--muted)] mt-2">After payment, return to this window and click “I’ve paid” to upload your photo.</p>
+          <button id="toStep2" class="btn btn-outline mt-3">I’ve paid → Next</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Upload form -->
+      <div id="step2" class="step px-6 pb-6 pt-4">
+        <form action="FORM_ACTION_URL_HERE" method="POST" enctype="multipart/form-data" class="card p-5">
+          <!-- TODO: Replace FORM_ACTION_URL_HERE with your Formspree / Google Forms / Typeform endpoint -->
+          <h3 class="font-bold">Upload & Details</h3>
+          <div class="grid md:grid-cols-2 gap-4 mt-4">
+            <label class="text-sm">Name
+              <input class="mt-1 w-full border rounded-md p-2" name="name" required/>
+            </label>
+            <label class="text-sm">Email
+              <input class="mt-1 w-full border rounded-md p-2" type="email" name="email" required/>
+            </label>
+            <label class="text-sm md:col-span-2">Preferred city
+              <select class="mt-1 w-full border rounded-md p-2" name="city" required>
+                <option>Paris</option><option>London</option><option>Florence</option><option>Santorini</option>
+              </select>
+            </label>
+            <label class="text-sm md:col-span-2">Style notes (optional)
+              <input class="mt-1 w-full border rounded-md p-2" name="notes" placeholder="e.g., film, vintage, sunset, fashion editorial"/>
+            </label>
+            <label class="text-sm md:col-span-2">Upload photo (JPG/PNG, up to 20MB)
+              <input class="mt-1 w-full border rounded-md p-2" type="file" name="photo" accept="image/*" required/>
+            </label>
+          </div>
+          <label class="flex items-center gap-2 text-sm mt-3">
+            <input type="checkbox" required/> I agree to the Terms & Privacy and confirm I own the photo.
+          </label>
+          <button class="btn mt-4 w-full" type="submit">Submit</button>
+          <p class="text-xs text-[var(--muted)] mt-2">We’ll deliver within 24 hours. If you have trouble uploading, reply to the confirmation email with your photo attached.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Modal open/close
+  const modal = document.getElementById('orderModal');
+  const openers = ['openModalTop','openModalTopSm','openModalHero','openModalMid','openModalBottom','openModalSticky','openModalPrice1','openModalPrice2','openModalPrice3']
+    .map(id => document.getElementById(id)).filter(Boolean);
+  const closeBtn = document.getElementById('closeModal');
+  openers.forEach(btn => btn.addEventListener('click', ()=> { modal.classList.add('open'); document.body.style.overflow='hidden'; }));
+  closeBtn.addEventListener('click', ()=> { modal.classList.remove('open'); document.body.style.overflow=''; });
+
+  // Steps
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const dot1  = document.getElementById('dot1');
+  const dot2  = document.getElementById('dot2');
+  const toStep2 = document.getElementById('toStep2');
+  toStep2.addEventListener('click', ()=>{
+    step1.classList.remove('active'); step2.classList.add('active');
+    dot1.textContent = 'Step 1 — Paid'; dot2.textContent = 'Step 2 — Upload (active)';
+  });
+
+  // Pack → Stripe link mapping (replace with your 3 payment links if需要)
+  const payLink = document.getElementById('payLink');
+  function setLink(val){
+    // TODO: 如果你有三个不同的 Stripe Payment Link，在这里按 val 切换
+    payLink.href = 'STRIPE_PAYMENT_LINK_HERE';
+  }
+  document.querySelectorAll('input[name="pack"]').forEach(r => {
+    r.addEventListener('change', ()=> setLink(r.value));
+  });
+  setLink('19');
+</script>
+</body>
 </html>
+
